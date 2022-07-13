@@ -1,4 +1,4 @@
-module 5.2
+module gopl
 
 go 1.18
 
