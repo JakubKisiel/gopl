@@ -15,23 +15,21 @@ func main() {
 	}
 	defer resp.Body.Close()
 	doc, err := html.Parse(resp.Body)
-	fmt.Fprintf(os.Stderr, "error while parsing %v", err)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "error while parsing %v", err)
 		os.Exit(1)
 	}
-	elmMap := make(map[string]int)
-	visit(doc, elmMap)
-	for k, v := range elmMap {
-		fmt.Printf("%8s -> %d\n", k, v)
-	}
+	visit(doc)
 }
 
-func visit(n *html.Node, elmMap map[string]int) {
-	if n.Type == html.ElementNode {
-		elmMap[n.Data]++
+func visit(n *html.Node) {
+	if n.Type == html.TextNode {
+		fmt.Printf("Printing contents of %v \nContent: %s\n", n.Parent.Data, n.Data)
 	}
 	for c := n.FirstChild; c != nil; c = c.NextSibling {
-		visit(c, elmMap)
+		if c.Data == "script" || c.Data == "style" {
+			continue
+		}
+		visit(c)
 	}
 }
