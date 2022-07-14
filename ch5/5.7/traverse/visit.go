@@ -2,17 +2,18 @@ package traverse
 
 import (
 	"fmt"
+	"log"
 	"strings"
 
 	"golang.org/x/net/html"
 )
 
 func BeforeElement(n *html.Node, depth *int) {
-	if n.Type == html.TextNode && n.Data != "" {
-		fmt.Printf("%*s%s\n", *depth*2, "", n.Data)
+	if n.Type == html.TextNode && strings.TrimSpace(n.Data) != "" {
+		log.Printf("%*s%sxdddd\n", *depth*2, "", n.Data)
 	}
 	if n.Type == html.CommentNode {
-		fmt.Printf("%*s<--%s-->\n", *depth*2, "", n.Data)
+		log.Printf("%*s<!--%s-->\n", *depth*2, "", n.Data)
 	}
 	if n.Type != html.ElementNode {
 		return
@@ -28,7 +29,7 @@ func BeforeElement(n *html.Node, depth *int) {
 	if n.FirstChild == nil {
 		sb.WriteString("/")
 	}
-	fmt.Printf("%*s<%s>\n", *depth*2, "", sb.String())
+	log.Printf("%*s<%s>\n", *depth*2, "", sb.String())
 	*depth++
 }
 
@@ -40,7 +41,7 @@ func AfterElement(n *html.Node, depth *int) {
 	if n.FirstChild == nil {
 		return
 	}
-	fmt.Printf("%*s</%s>\n", *depth*2, "", n.Data)
+	log.Printf("%*s</%s>\n", *depth*2, "", n.Data)
 }
 
 func Visit(n *html.Node, depth *int, pre, post func(*html.Node, *int)) {
