@@ -81,14 +81,11 @@ func (s *IntSet) Len() int {
 }
 
 func (s *IntSet) Remove(x int) {
-	if !s.Has(x) {
-		return
-	}
 	word, bit := x/64, uint(x%64)
 	for word >= len(s.words) {
 		s.words = append(s.words, 0)
 	}
-	s.words[word] ^= 1 << bit
+	s.words[word] ^= 1 << bit & s.words[word]
 }
 
 func (s *IntSet) Clear() {
