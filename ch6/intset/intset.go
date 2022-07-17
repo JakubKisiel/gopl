@@ -99,3 +99,9 @@ func (s *IntSet) Copy() *IntSet {
 	x.words = append(x.words, s.words...)
 	return &x
 }
+
+func (s *IntSet) AddAll(vars ...int) {
+	for _, val := range vars {
+		s.Add(val)
+	}
+}

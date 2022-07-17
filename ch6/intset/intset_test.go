@@ -50,6 +50,14 @@ func Example_two() {
 	// {[4398046511618 0 65536]}
 }
 
+func prepareIntSet(arr []int) *IntSet {
+	var x IntSet
+	for _, val := range arr {
+		x.Add(val)
+	}
+	return &x
+}
+
 func TestLen(t *testing.T) {
 	type Test struct {
 		arr    []int
@@ -63,10 +71,7 @@ func TestLen(t *testing.T) {
 
 	for i, testCase := range testCases {
 		testFunc := func(t *testing.T) {
-			var x IntSet
-			for _, val := range testCase.arr {
-				x.Add(val)
-			}
+			x := *prepareIntSet(testCase.arr)
 			if x.Len() != testCase.result {
 				t.Errorf("Expected: %d\nto be equal to: %d\nIntSet: %s",
 					x.Len(), testCase.result, x.String())
@@ -88,10 +93,7 @@ func TestRemove(t *testing.T) {
 
 	for i, testCase := range testCases {
 		testFunc := func(t *testing.T) {
-			var x IntSet
-			for _, val := range testCase.arr {
-				x.Add(val)
-			}
+			x := *prepareIntSet(testCase.arr)
 			x.Remove(testCase.remove)
 			if x.Has(testCase.remove) {
 				t.Errorf("Expected: %d \nto be absent in:%s",
@@ -114,15 +116,39 @@ func TestCopy(t *testing.T) {
 
 	for i, testCase := range testCases {
 		testFunc := func(t *testing.T) {
-			var x IntSet
-			for _, val := range testCase.arr {
-				x.Add(val)
-			}
+			x := *prepareIntSet(testCase.arr)
 			n := x.Copy()
 			for _, result := range testCase.arr {
 				if !n.Has(result) {
 					t.Errorf("Expected: %s \nto be equal to: %s",
 						n.String(), x.String())
+				}
+			}
+		}
+		t.Run(strconv.Itoa(i), testFunc)
+	}
+}
+
+func TestVariadic(t *testing.T) {
+	type Test struct {
+		arr    []int
+		toAdd  []int
+		result []int
+	}
+	testCases := []Test{
+		{[]int{}, []int{1, 2, 3}, []int{1, 2, 3}},
+		{[]int{1}, []int{1, 2, 3}, []int{1, 2, 3}},
+		{[]int{1, 3, 65436543, 43211}, []int{2}, []int{1, 2, 3, 65436543, 43211}},
+	}
+
+	for i, testCase := range testCases {
+		testFunc := func(t *testing.T) {
+			x := *prepareIntSet(testCase.arr)
+			x.AddAll(testCase.toAdd...)
+			for _, result := range testCase.result {
+				if !x.Has(result) {
+					t.Errorf("Expected: %s \nto be equal to: %v",
+						x.String(), testCase.result)
 				}
 			}
 		}
