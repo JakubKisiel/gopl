@@ -108,3 +108,20 @@ func (s *IntSet) AddAll(vars ...int) {
 		s.Add(val)
 	}
 }
+
+func (s *IntSet) Elems() []int {
+	var elems []int
+	for i, word := range s.words {
+		if word == 0 {
+			continue
+		}
+		for j := 0; j < uint_size; j++ {
+			if word&(1<<uint(j)) == 0 {
+				continue
+			}
+			elems = append(elems, uint_size*i+j)
+		}
+	}
+	return elems
+
+}

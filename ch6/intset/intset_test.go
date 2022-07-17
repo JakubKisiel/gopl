@@ -155,3 +155,29 @@ func TestVariadic(t *testing.T) {
 		t.Run(strconv.Itoa(i), testFunc)
 	}
 }
+
+func TestElem(t *testing.T) {
+	type Test struct {
+		arr    []int
+		result []int
+	}
+	testCases := []Test{
+		{[]int{}, []int{}},
+		{[]int{1}, []int{1}},
+		{[]int{1, 3, 65436543, 43211}, []int{1, 3, 43211, 65436543}},
+	}
+
+	for i, testCase := range testCases {
+		testFunc := func(t *testing.T) {
+			x := *prepareIntSet(testCase.arr)
+			elem := x.Elems()
+			for i, result := range elem {
+				if result != testCase.result[i] {
+					t.Errorf("Expected: %v \nto be equal to: %v",
+						elem, testCase.result)
+				}
+			}
+		}
+		t.Run(strconv.Itoa(i), testFunc)
+	}
+}
